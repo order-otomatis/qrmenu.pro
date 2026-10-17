@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir Mandiri & QR Menu | SaaS Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Library QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        body { background-color: #000080; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .luxury-card { background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%); border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
+        .gold-text { color: #FFD700 !important; }
+        .gold-btn { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000080; font-weight: 800; transition: all 0.3s ease; }
+        .gold-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- VIEW 1: REGISTRASI & LOGIN ADMIN -->
+    <div id="auth-view" class="max-w-md mx-auto px-4 pt-12 space-y-6">
+        <div class="luxury-card rounded-3xl p-6 space-y-5 border border-amber-400">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 rounded-2xl bg-amber-400/20 border border-amber-400 mx-auto flex items-center justify-center gold-text text-2xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h1 id="auth-title" class="text-xl font-black gold-text">REGISTRASI TOKO BARU</h1>
+                <p id="auth-subtitle" class="text-xs text-slate-300">Buat Akun & Password untuk Akses 1 Tahun</p>
+            </div>
+
+            <!-- INFO / TOMBOL BELI LISENSI VIA LYNK.ID -->
+            <div class="bg-blue-950/80 border border-amber-400/50 p-3 rounded-2xl text-center space-y-2">
+                <p class="text-[11px] text-slate-200">Belum punya lisensi akses 1 tahun?</p>
+                <a href="http://lynk.id/ilmurahasia/pwp32kyp81oy/checkout" target="_blank" class="inline-block bg-amber-400 hover:bg-amber-300 text-blue-950 font-black text-xs px-4 py-2 rounded-xl transition shadow-md">
+                    <i class="fa-solid fa-cart-shopping mr-1"></i> Beli Akses Lisensi via Lynk.id[cite: 1]
+                </a>
+            </div>
+
+            <!-- FORM REGISTRASI -->
+            <div id="form-register" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Username Unik (Tanpa Spasi):</label>
+                    <input type="text" id="reg-user" placeholder="contoh: warungmakanbsd" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Password Admin:</label>
+                    <input type="password" id="reg-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Toko / Resto / Warung:</label>
+                    <input type="text" id="reg-store" placeholder="Warung Makan Bu Siska" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nomor WhatsApp (Penerima Order):</label>
+                    <input type="text" id="reg-wa" placeholder="62852xxxxxxxx" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Alamat Email:</label>
+                    <input type="email" id="reg-email" placeholder="tokoanda@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <button onclick="registerStore()" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
+                    Daftar & Kunci ke Perangkat Ini
+                </button>
+                <div class="text-center pt-2">
+                    <button onclick="toggleAuthMode('login')" class="text-[11px] text-amber-300 underline">Sudah punya akun? Login di sini</button>
+                </div>
+            </div>
+
+            <!-- FORM LOGIN -->
+            <div id="form-login" class="space-y-3 hidden">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Username:</label>
+                    <input type="text" id="login-user" placeholder="Username toko anda" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Password:</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <button onclick="loginStore()" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
+                    Masuk ke Dashboard Admin
+                </button>
+                <div class="text-center pt-2">
+                    <button onclick="toggleAuthMode('register')" class="text-[11px] text-amber-300 underline">Belum punya akun? Daftar baru</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: DASHBOARD ADMIN -->
+    <div id="admin-view" class="hidden max-w-2xl mx-auto px-4 pt-4 space-y-6">
+        <header class="luxury-card rounded-2xl px-4 py-3 flex justify-between items-center border border-amber-400/40">
+            <div>
+                <h2 id="admin-store-name" class="font-black text-sm sm:text-base gold-text">NAMA TOKO</h2>
+                <p class="text-[10px] text-slate-300">Status Lisensi: <span class="text-emerald-400 font-bold">Aktif (1 Tahun)</span></p>
+            </div>
+            <button onclick="logoutDevice()" class="bg-red-900/60 text-white text-[10px] px-3 py-1.5 rounded-lg border border-red-500">Keluar / Reset</button>
+        </header>
+
+        <!-- BARCODE & LINK KHUSUS TOKO -->
+        <div class="luxury-card rounded-2xl p-5 space-y-4 border border-amber-400/50 text-center">
+            <h3 class="text-xs font-black gold-text uppercase tracking-wider">
+                <i class="fa-solid fa-qrcode mr-1"></i> Barcode & Link Pemesan Toko Anda
+            </h3>
+            <p class="text-xs text-slate-300">Bagikan link ini atau cetak QR Code untuk dipasang di meja pelanggan:</p>
+            
+            <div id="qrcode" class="bg-white p-3 rounded-2xl inline-block mx-auto shadow-lg"></div>
+
+            <div class="space-y-1">
+                <label class="block text-[10px] text-slate-400">Link Menu Khusus Toko Anda:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="store-link-input" readonly class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 text-center select-all">
+                    <button onclick="copyStoreLink()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0">Salin</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAMBAH MENU -->
+        <div class="luxury-card rounded-2xl p-5 space-y-4 border border-amber-400/40">
+            <h3 class="text-xs font-black gold-text uppercase tracking-wider">
+                <i class="fa-solid fa-utensils mr-1"></i> Tambah Menu Baru ke Google Sheet
+            </h3>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="new-name" placeholder="Nama Menu (Contoh: Es Teh)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                <select id="new-category" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <option value="Makanan Berat">Makanan Berat</option>
+                    <option value="Minuman">Minuman</option>
+                    <option value="Cemilan">Cemilan</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="number" id="new-price" placeholder="Harga (Rp)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                <input type="text" id="new-image" placeholder="URL Foto Makanan" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+            </div>
+            <button onclick="addNewMenu()" class="gold-btn w-full py-2.5 rounded-xl text-xs uppercase tracking-wider">Simpan Menu Baru</button>
+        </div>
+    </div>
+
+    <!-- VIEW 3: APLIKASI KONSUMEN / PEMESAN -->
+    <div id="customer-view" class="hidden max-w-2xl mx-auto px-4 pt-4 space-y-6">
+        <header class="luxury-card rounded-2xl px-4 py-3 text-center border border-amber-400/40">
+            <h2 id="cust-store-name" class="font-black text-base gold-text">NAMA TOKO</h2>
+            <p class="text-[10px] text-slate-300">Silakan pilih menu pesanan Anda di bawah ini</p>
+        </header>
+
+        <div class="space-y-4">
+            <div class="flex gap-2 overflow-x-auto pb-2" id="category-filters">
+                <button onclick="filterCategory('Semua')" class="category-btn px-4 py-1.5 rounded-full text-xs font-bold bg-amber-400 text-blue-950 shrink-0">Semua</button>
+            </div>
+
+            <div class="space-y-3" id="menu-list-container"></div>
+
+            <div class="luxury-card rounded-2xl p-4 space-y-4 border border-amber-400/50 mt-6">
+                <h3 class="text-sm font-black gold-text uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-receipt"></i> Ringkasan Pesanan
+                </h3>
+                <div id="cart-items" class="text-xs space-y-2 max-h-40 overflow-y-auto divide-y divide-slate-700/50">
+                    <p class="text-slate-400 text-center py-2">Belum ada menu.</p>
+                </div>
+                <div class="border-t border-amber-400/30 pt-3 flex justify-between items-center text-sm font-black">
+                    <span>Total Pembayaran:</span>
+                    <span id="cart-total" class="gold-text text-base">Rp 0</span>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Pemesan:</label>
+                        <input type="text" id="customer-name" placeholder="Contoh: Bpk. Budi" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-300 mb-1">Nomor Meja / Alamat Pengiriman:</label>
+                        <input type="text" id="customer-location" placeholder="Contoh: Meja No. 05" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-300 mb-1">Metode Pembayaran:</label>
+                        <select id="payment-method" onchange="togglePaymentProof()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                            <option value="Transfer Bank / QRIS">Transfer Bank / QRIS / E-Wallet</option>
+                            <option value="Cash (Bayar di Kasir)">Cash / Bayar di Tempat</option>
+                        </select>
+                    </div>
+                    <div id="proof-container" class="space-y-1">
+                        <label class="block text-[11px] font-bold text-amber-300 mb-1">Upload Bukti Transfer:</label>
+                        <input type="file" id="payment-proof" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:bg-amber-400 file:text-blue-950 font-semibold cursor-pointer">
+                    </div>
+                </div>
+
+                <button onclick="sendOrderToWhatsApp()" class="gold-btn w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> KIRIM ORDERAN KE WHATSAPP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwztCbP-L8QPjDBlNydqpxVLhbJZpaYRlztkfHvd3-ED39We2Cm-aJHR8RyPD33fA17Jw/exec";
+        let menuItems = [];
+        let cart = {};
+        let currentCategory = 'Semua';
+        let currentStore = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetStoreKey = urlParams.get('store');
+
+            if (targetStoreKey) {
+                document.getElementById('auth-view').classList.add('hidden');
+                document.getElementById('customer-view').classList.remove('hidden');
+                fetchCustomerMenu(targetStoreKey);
+            } else {
+                checkLicenseExpiration();
+                const savedStore = localStorage.getItem('locked_store_data');
+                if (savedStore) {
+                    currentStore = JSON.parse(savedStore);
+                    document.getElementById('auth-view').classList.add('hidden');
+                    document.getElementById('admin-view').classList.remove('hidden');
+                    document.getElementById('admin-store-name').innerText = currentStore.storeName;
+                    
+                    const storeLink = window.location.href.split('?')[0] + "?store=" + currentStore.storeKey;
+                    document.getElementById('store-link-input').value = storeLink;
+
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: storeLink, width: 140, height: 140
+                    });
+                }
+            }
+        });
+
+        function toggleAuthMode(mode) {
+            if (mode === 'login') {
+                document.getElementById('form-register').classList.add('hidden');
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('auth-title').innerText = "LOGIN ADMIN TOKO";
+                document.getElementById('auth-subtitle').innerText = "Masukkan Username & Password Anda";
+            } else {
+                document.getElementById('form-login').classList.add('hidden');
+                document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('auth-title').innerText = "REGISTRASI TOKO BARU";
+                document.getElementById('auth-subtitle').innerText = "Buat Akun & Password untuk Akses 1 Tahun";
+            }
+        }
+
+        function checkLicenseExpiration() {
+            const savedStore = localStorage.getItem('locked_store_data');
+            if (!savedStore) return;
+            let storeData = JSON.parse(savedStore);
+            if (!storeData.activationDate) {
+                storeData.activationDate = new Date().toISOString();
+                localStorage.setItem('locked_store_data', JSON.stringify(storeData));
+            }
+            const activatedTime = new Date(storeData.activationDate).getTime();
+            const currentTime = new Date().getTime();
+            const oneYearInMillis = 365 * 24 * 60 * 60 * 1000; 
+
+            if ((currentTime - activatedTime) > oneYearInMillis) {
+                document.body.innerHTML = `
+                    <div class="max-w-md mx-auto px-4 pt-20 text-center">
+                        <div class="luxury-card rounded-3xl p-8 space-y-5 border border-red-500 shadow-2xl bg-slate-950">
+                            <div class="w-16 h-16 rounded-2xl bg-red-500/20 border border-red-500 mx-auto flex items-center justify-center text-red-400 text-3xl">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <h1 class="text-xl font-black text-red-500">MASA AKTIF HABIS</h1>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Masa lisensi aplikasi toko Anda selama 12 bulan (1 Tahun) telah berakhir. Silakan perpanjangan.
+                            </p>
+                            <div class="bg-blue-950/60 p-4 rounded-2xl border border-amber-400/40 space-y-2">
+                                <p class="text-[11px] text-amber-300 font-bold uppercase">Hubungi Admin Penyedia Aplikasi:</p>
+                                <p class="text-sm font-black text-white"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> 0852-2295-2220</p>
+                                <p class="text-sm font-black text-white"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> 0858-8815-5541</p>
+                            </div>
+                            <button onclick="localStorage.clear(); location.reload();" class="text-[10px] text-slate-500 underline">Reset Lisensi</button>
+                        </div>
+                    </div>
+                `;
+                throw new Error("Expired");
+            }
+        }
+
+        async function registerStore() {
+            const username = document.getElementById('reg-user').value.trim();
+            const password = document.getElementById('reg-pass').value.trim();
+            const storeName = document.getElementById('reg-store').value.trim();
+            const wa = document.getElementById('reg-wa').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+
+            if (!username || !password || !storeName || !wa || !email) {
+                alert("Semua kolom termasuk password wajib diisi, Boss!");
+                return;
+            }
+
+            try {
+                let response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "register", username, password, storeName, wa, email })
+                });
+                let result = await response.json();
+                if (result.status === "success") {
+                    result.activationDate = new Date().toISOString();
+                    localStorage.setItem('locked_store_data', JSON.stringify(result));
+                    alert("Registrasi Berhasil!");
+                    location.reload();
+                } else {
+                    alert("Gagal registrasi.");
+                }
+            } catch (err) {
+                alert("Kesalahan koneksi server.");
+            }
+        }
+
+        async function loginStore() {
+            const username = document.getElementById('login-user').value.trim();
+            const password = document.getElementById('login-pass').value.trim();
+
+            if (!username || !password) {
+                alert("Masukkan username dan password!");
+                return;
+            }
+
+            try {
+                let response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "login", username, password })
+                });
+                let result = await response.json();
+                if (result.status === "success") {
+                    result.activationDate = new Date().toISOString();
+                    localStorage.setItem('locked_store_data', JSON.stringify(result));
+                    alert("Login Berhasil!");
+                    location.reload();
+                } else {
+                    alert("Username atau Password salah!");
+                }
+            } catch (err) {
+                alert("Kesalahan koneksi server.");
+            }
+        }
+
+        async function fetchCustomerMenu(storeKey) {
+            try {
+                let response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "getMenu", storeKey: storeKey })
+                });
+                let data = await response.json();
+                menuItems = data.menu || [];
+                document.getElementById('cust-store-name').innerText = data.storeName || "MENU TOKO";
+                renderCategories();
+                renderMenuList();
+            } catch (err) {
+                console.error("Gagal memuat menu");
+            }
+        }
+
+        async function addNewMenu() {
+            const name = document.getElementById('new-name').value.trim();
+            const category = document.getElementById('new-category').value;
+            const price = document.getElementById('new-price').value;
+            const image = document.getElementById('new-image').value.trim();
+
+            if (!name || !price) {
+                alert("Nama menu dan harga wajib diisi!");
+                return;
+            }
+
+            try {
+                let response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        action: "saveMenu", 
+                        storeKey: currentStore.storeKey, 
+                        name, category, price, image 
+                    })
+                });
+                let result = await response.json();
+                if (result.status === "success") {
+                    alert("Menu baru berhasil disimpan ke Google Sheet!");
+                    document.getElementById('new-name').value = '';
+                    document.getElementById('new-price').value = '';
+                    document.getElementById('new-image').value = '';
+                } else {
+                    alert("Gagal menyimpan menu.");
+                }
+            } catch (err) {
+                alert("Kesalahan koneksi.");
+            }
+        }
+
+        function togglePaymentProof() {
+            const method = document.getElementById('payment-method').value;
+            const proofContainer = document.getElementById('proof-container');
+            if (method.includes('Cash')) {
+                proofContainer.classList.add('hidden');
+            } else {
+                proofContainer.classList.remove('hidden');
+            }
+        }
+
+        function renderCategories() {
+            const categories = ['Semua', ...new Set(menuItems.map(item => item.category))];
+            const container = document.getElementById('category-filters');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" class="category-btn px-4 py-1.5 rounded-full text-xs font-bold ${currentCategory === cat ? 'bg-amber-400 text-blue-950' : 'bg-slate-900 text-slate-300 border border-slate-700'} shrink-0 transition">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderCategories();
+            renderMenuList();
+        }
+
+        function renderMenuList() {
+            const container = document.getElementById('menu-list-container');
+            const filtered = currentCategory === 'Semua' ? menuItems : menuItems.filter(i => i.category === currentCategory);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">Belum ada menu.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const qty = cart[item.id] ? cart[item.id].qty : 0;
+                return `
+                    <div class="luxury-card rounded-2xl p-3 flex items-center justify-between gap-3 border border-amber-400/20">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'}" class="w-14 h-14 object-cover rounded-xl border border-amber-400/30">
+                            <div>
+                                <span class="text-[9px] bg-blue-950 text-amber-300 px-2 py-0.5 rounded font-bold uppercase">${item.category}</span>
+                                <h3 class="font-bold text-white text-sm mt-0.5">${item.name}</h3>
+                                <p class="gold-text text-xs font-extrabold">Rp ${parseInt(item.price).toLocaleString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${qty > 0 ? `
+                                <button onclick="updateCart(${item.id}, -1)" class="w-7 h-7 bg-red-600 text-white rounded-lg font-bold text-xs">-</button>
+                                <span class="text-xs font-bold w-5 text-center">${qty}</span>
+                            ` : ''}
+                            <button onclick="updateCart(${item.id}, 1)" class="gold-btn w-8 h-8 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCart(id, change) {
+            const item = menuItems.find(i => i.id == id);
+            if (!cart[id]) cart[id] = { ...item, qty: 0 };
+            cart[id].qty += change;
+            if (cart[id].qty <= 0) delete cart[id];
+            renderMenuList();
+            renderCartSummary();
+        }
+
+        function renderCartSummary() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            const keys = Object.keys(cart);
+
+            if (keys.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-center py-2">Belum ada menu.</p>`;
+                totalEl.innerText = `Rp 0`;
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = keys.map(k => {
+                const sub = cart[k].price * cart[k].qty;
+                total += sub;
+                return `
+                    <div class="py-1.5 flex justify-between items-center text-xs">
+                        <span>${cart[k].name} <span class="text-amber-400 font-bold">(${cart[k].qty}x)</span></span>
+                        <span class="font-bold">Rp ${sub.toLocaleString('id-ID')}</span>
+                    </div>
+                `;
+            }).join('');
+            totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        // KIRIM ORDER KE WA DALAM BENTUK NOTA TABEL RAPI
+        function sendOrderToWhatsApp() {
+            const keys = Object.keys(cart);
+            if (keys.length === 0) { alert("Pilih menu dulu!"); return; }
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerLocation = document.getElementById('customer-location').value.trim();
+
+            if (!customerName || !customerLocation) { alert("Mohon isi Nama dan Nomor Meja / Alamat!"); return; }
+
+            const paymentMethod = document.getElementById('payment-method').value;
+            const hasProof = document.getElementById('payment-proof').files.length > 0;
+            let statusPembayaran = paymentMethod.includes('Cash') ? "BELUM LUNAS (Cash)" : "LUNAS (Transfer)";
+
+            let total = 0;
+            let itemsText = "";
+            keys.forEach((k, index) => {
+                const sub = cart[k].price * cart[k].qty;
+                total += sub;
+                itemsText += ` ${index + 1}  | ${cart[k].name.padEnd(12, ' ')} |  ${cart[k].qty}  | Rp ${sub.toLocaleString('id-ID')}\n`;
+            });
+
+            let message = `══════════════════════════\n`;
+            message += `      *NOTA PESANAN* 🧾\n`;
+            message += `══════════════════════════\n`;
+            message += `👤 *Pemesan:* ${customerName}\n`;
+            message += `📍 *Meja/Alamat:* ${customerLocation}\n`;
+            message += `------------------------------------------\n`;
+            message += `*NO | MENU         | QTY | SUB-TOTAL*\n`;
+            message += `------------------------------------------\n`;
+            message += itemsText;
+            message += `------------------------------------------\n`;
+            message += `💰 *TOTAL:*            *Rp ${total.toLocaleString('id-ID')}*\n`;
+            message += `💳 *Metode:* ${paymentMethod}\n`;
+            message += `📌 *Status:* *${statusPembayaran}*\n`;
+            if(hasProof) message += `📷 *Bukti Transfer:* Terlampir\n`;
+            message += `══════════════════════════`;
+
+            window.open(`https://wa.me/${currentStore.wa}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function copyStoreLink() {
+            const copyText = document.getElementById("store-link-input");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("Link berhasil disalin!");
+        }
+
+        function logoutDevice() {
+            if (confirm("Keluar dari perangkat ini?")) {
+                localStorage.removeItem('locked_store_data');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
