@@ -3,204 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kasir Mandiri & QR Menu | SaaS Premium</title>
+    <title>Admin Dashboard & Aktivasi Toko | SaaS Premium</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Library QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Google Fonts: Plus Jakarta Sans / Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { background-color: #000080; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .luxury-card { background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%); border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
-        .gold-text { color: #FFD700 !important; }
-        .gold-btn { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000080; font-weight: 800; transition: all 0.3s ease; }
-        .gold-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
+        body { 
+            background: radial-gradient(circle at top, #0f172a 0%, #000033 100%); 
+            color: #ffffff; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            min-height: 100vh;
+        }
+        .luxury-card { 
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.35); 
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.1);
+        }
+        .gold-text { 
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-btn { 
+            background: linear-gradient(135deg, #FFD700 0%, #F59E0B 100%); 
+            color: #000066; 
+            font-weight: 800; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        .gold-btn:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5); 
+        }
+        .input-luxury {
+            background: rgba(2, 6, 23, 0.7);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .input-luxury:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
+            outline: none;
+        }
+        /* Animasi Masuk Halus */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="pb-16 pt-6 px-4">
 
-    <!-- VIEW 1: REGISTRASI & LOGIN ADMIN -->
-    <div id="auth-view" class="max-w-md mx-auto px-4 pt-12 space-y-6">
-        <div class="luxury-card rounded-3xl p-6 space-y-5 border border-amber-400">
-            <div class="text-center space-y-2">
-                <div class="w-14 h-14 rounded-2xl bg-amber-400/20 border border-amber-400 mx-auto flex items-center justify-center gold-text text-2xl">
-                    <i class="fa-solid fa-lock"></i>
+    <!-- VIEW 1: PANEL UTAMA (REGISTER / GENERATE TOKEN & LOGIN ADMIN) DENGAN ANIMASI MEWAH -->
+    <div id="auth-view" class="max-w-md mx-auto space-y-6 animate-fade-in">
+        <div class="luxury-card rounded-3xl p-8 space-y-6 border border-amber-400/40 relative overflow-hidden">
+            <!-- Glow Effect di Background Card -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="text-center space-y-3 relative z-10">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 to-amber-600/30 border border-amber-400/60 mx-auto flex items-center justify-center gold-text text-3xl shadow-lg">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h1 id="auth-title" class="text-xl font-black gold-text">REGISTRASI TOKO BARU</h1>
-                <p id="auth-subtitle" class="text-xs text-slate-300">Buat Akun & Password untuk Akses 1 Tahun</p>
+                <div>
+                    <h1 class="text-xl font-extrabold gold-text tracking-wide">PORTAL ADMIN & AKTIVASI</h1>
+                    <p class="text-xs text-slate-300 mt-1">Sistem Manajemen Toko & QR Menu Berlangganan 1 Tahun</p>
+                </div>
             </div>
 
-            <!-- INFO / TOMBOL BELI LISENSI VIA LYNK.ID -->
-            <div class="bg-blue-950/80 border border-amber-400/50 p-3 rounded-2xl text-center space-y-2">
-                <p class="text-[11px] text-slate-200">Belum punya lisensi akses 1 tahun?</p>
-                <a href="http://lynk.id/ilmurahasia/pwp32kyp81oy/checkout" target="_blank" class="inline-block bg-amber-400 hover:bg-amber-300 text-blue-950 font-black text-xs px-4 py-2 rounded-xl transition shadow-md">
-                    <i class="fa-solid fa-cart-shopping mr-1"></i> Beli Akses Lisensi via Lynk.id[cite: 1]
-                </a>
-            </div>
-
-            <!-- FORM REGISTRASI -->
-            <div id="form-register" class="space-y-3">
+            <!-- FORM GENERATE TOKEN / REGISTER -->
+            <div id="form-register" class="space-y-3.5 relative z-10 transition-all duration-300">
+                <div class="bg-blue-950/40 border border-amber-400/20 p-2.5 rounded-xl text-center">
+                    <p class="text-[11px] text-amber-300 font-semibold"><i class="fa-solid fa-circle-info mr-1"></i> Form Aktivasi Khusus Pengguna Setelah Berlangganan</p>
+                </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Username Unik (Tanpa Spasi):</label>
-                    <input type="text" id="reg-user" placeholder="contoh: warungmakanbsd" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <input type="text" id="reg-user" placeholder="warungmakanbsd" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Password Admin:</label>
-                    <input type="password" id="reg-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <input type="password" id="reg-pass" placeholder="••••••••" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Toko / Resto / Warung:</label>
-                    <input type="text" id="reg-store" placeholder="Warung Makan Bu Siska" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Toko / Resto:</label>
+                    <input type="text" id="reg-store" placeholder="Warung Siska" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nomor WhatsApp (Penerima Order):</label>
-                    <input type="text" id="reg-wa" placeholder="62852xxxxxxxx" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Pemilik:</label>
+                    <input type="text" id="reg-owner" placeholder="Ibu Siska" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Alamat Email:</label>
-                    <input type="email" id="reg-email" placeholder="tokoanda@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">No. WhatsApp Penerima Order:</label>
+                    <input type="text" id="reg-wa" placeholder="62852xxxxxxxx" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
-                <button onclick="registerStore(this)" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
-                    Daftar & Kunci ke Perangkat Ini
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Email:</label>
+                    <input type="email" id="reg-email" placeholder="tokoanda@gmail.com" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
+                </div>
+                <button onclick="generateTokenAndLogin(this)" class="gold-btn w-full py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2 cursor-pointer">
+                    <i class="fa-solid fa-key mr-1.5"></i> GENERATE TOKEN & MASUK DASHBOARD
                 </button>
-                <div class="text-center pt-2">
-                    <button onclick="toggleAuthMode('login')" class="text-[11px] text-amber-300 underline">Sudah punya akun? Login di sini</button>
+                <div class="text-center pt-3">
+                    <button onclick="toggleAuthMode('login')" class="text-xs text-amber-300 hover:text-amber-200 underline font-semibold transition">Sudah punya akun aktif? Login di sini</button>
                 </div>
             </div>
 
-            <!-- FORM LOGIN -->
-            <div id="form-login" class="space-y-3 hidden">
+            <!-- FORM LOGIN (TERSEMBUNYI AWALNYA) -->
+            <div id="form-login" class="space-y-4 relative z-10 hidden transition-all duration-300">
+                <div class="bg-blue-950/50 border border-amber-400/20 p-3 rounded-xl text-center">
+                    <p class="text-xs font-bold gold-text uppercase">Login Dashboard Admin</p>
+                </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Username:</label>
-                    <input type="text" id="login-user" placeholder="Username toko anda" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <input type="text" id="login-user" placeholder="Username toko anda" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Password:</label>
-                    <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                    <input type="password" id="login-pass" placeholder="••••••••" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                 </div>
-                <button onclick="loginStore(this)" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
-                    Masuk ke Dashboard Admin
+                <button onclick="loginStore(this)" class="gold-btn w-full py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg cursor-pointer">
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> MASUK KE DASHBOARD
                 </button>
                 <div class="text-center pt-2">
-                    <button onclick="toggleAuthMode('register')" class="text-[11px] text-amber-300 underline">Belum punya akun? Daftar baru</button>
+                    <button onclick="toggleAuthMode('register')" class="text-xs text-slate-400 hover:text-slate-200 underline transition">&larr; Kembali ke Form Aktivasi Token</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- VIEW 2: DASHBOARD ADMIN -->
-    <div id="admin-view" class="hidden max-w-2xl mx-auto px-4 pt-4 space-y-6">
-        <header class="luxury-card rounded-2xl px-4 py-3 flex justify-between items-center border border-amber-400/40">
-            <div>
-                <h2 id="admin-store-name" class="font-black text-sm sm:text-base gold-text">NAMA TOKO</h2>
-                <p class="text-[10px] text-slate-300">Status Lisensi: <span class="text-emerald-400 font-bold">Aktif (1 Tahun)</span></p>
+    <!-- VIEW 2: DASHBOARD ADMIN (MEWAH & ELEGAN) -->
+    <div id="admin-view" class="hidden max-w-2xl mx-auto space-y-6 animate-fade-in">
+        <header class="luxury-card rounded-2xl px-6 py-4 flex justify-between items-center border border-amber-400/40">
+            <div class="space-y-0.5">
+                <h2 id="admin-store-name" class="font-extrabold text-base sm:text-lg gold-text tracking-wide">NAMA TOKO</h2>
+                <p class="text-[11px] text-slate-300">Status Lisensi: <span id="license-status" class="text-emerald-400 font-bold">Aktif & Terlindungi (1 Tahun)</span></p>
             </div>
-            <button onclick="logoutDevice()" class="bg-red-900/60 text-white text-[10px] px-3 py-1.5 rounded-lg border border-red-500">Keluar / Reset</button>
+            <button onclick="logoutDevice()" class="bg-red-950/80 hover:bg-red-900 text-red-300 text-xs px-3.5 py-2 rounded-xl border border-red-500/50 font-bold transition shadow-md cursor-pointer">
+                <i class="fa-solid fa-power-off mr-1"></i> Keluar
+            </button>
         </header>
 
-        <!-- BARCODE & LINK KHUSUS TOKO -->
-        <div class="luxury-card rounded-2xl p-5 space-y-4 border border-amber-400/50 text-center">
-            <h3 class="text-xs font-black gold-text uppercase tracking-wider">
-                <i class="fa-solid fa-qrcode mr-1"></i> Barcode & Link Pemesan Toko Anda
-            </h3>
-            <p class="text-xs text-slate-300">Bagikan link ini atau cetak QR Code untuk dipasang di meja pelanggan:</p>
-            
-            <div id="qrcode" class="bg-white p-3 rounded-2xl inline-block mx-auto shadow-lg"></div>
-
+        <!-- BARCODE & LINK -->
+        <div class="luxury-card rounded-3xl p-6 space-y-5 border border-amber-400/40 text-center relative overflow-hidden">
             <div class="space-y-1">
-                <label class="block text-[10px] text-slate-400">Link Menu Khusus Toko Anda:</label>
+                <h3 class="text-xs font-black gold-text uppercase tracking-widest flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i> Barcode & Link Pemesan Toko Anda
+                </h3>
+                <p class="text-xs text-slate-300">Cetak QR Code ini dan pasang di meja pelanggan:</p>
+            </div>
+            
+            <div class="bg-white p-4 rounded-2xl inline-block mx-auto shadow-2xl border-4 border-amber-400/30">
+                <div id="qrcode"></div>
+            </div>
+
+            <div class="space-y-1.5 text-left max-w-lg mx-auto">
+                <label class="block text-[11px] font-bold text-amber-300/90">Link Menu Khusus Toko Anda:</label>
                 <div class="flex gap-2">
-                    <input type="text" id="store-link-input" readonly class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 text-center select-all">
-                    <button onclick="copyStoreLink()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0">Salin</button>
+                    <input type="text" id="store-link-input" readonly class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-amber-300 text-center select-all font-mono">
+                    <button onclick="copyStoreLink()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-extrabold shrink-0 transition shadow-md cursor-pointer">
+                        <i class="fa-regular fa-copy mr-1"></i> Salin
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- TAMBAH MENU -->
-        <div class="luxury-card rounded-2xl p-5 space-y-4 border border-amber-400/40">
-            <h3 class="text-xs font-black gold-text uppercase tracking-wider">
-                <i class="fa-solid fa-utensils mr-1"></i> Tambah Menu Baru ke Google Sheet
+        <div class="luxury-card rounded-3xl p-6 space-y-4 border border-amber-400/40">
+            <h3 class="text-xs font-black gold-text uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-utensils"></i> Tambah Menu Baru ke Google Sheet
             </h3>
-            <div class="grid grid-cols-2 gap-2">
-                <input type="text" id="new-name" placeholder="Nama Menu (Contoh: Es Teh)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                <select id="new-category" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input type="text" id="new-name" placeholder="Nama Menu (Contoh: Nasi Goreng)" class="input-luxury rounded-xl px-3.5 py-2.5 text-xs text-white">
+                <select id="new-category" class="input-luxury rounded-xl px-3.5 py-2.5 text-xs text-white">
                     <option value="Makanan Berat">Makanan Berat</option>
                     <option value="Minuman">Minuman</option>
                     <option value="Cemilan">Cemilan</option>
                 </select>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-                <input type="number" id="new-price" placeholder="Harga (Rp)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                <input type="text" id="new-image" placeholder="URL Foto Makanan" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input type="number" id="new-price" placeholder="Harga (Rp tanpa titik)" class="input-luxury rounded-xl px-3.5 py-2.5 text-xs text-white">
+                <input type="text" id="new-image" placeholder="URL Foto Makanan (Opsional)" class="input-luxury rounded-xl px-3.5 py-2.5 text-xs text-white">
             </div>
-            <button onclick="addNewMenu(this)" class="gold-btn w-full py-2.5 rounded-xl text-xs uppercase tracking-wider">Simpan Menu Baru</button>
+            <button onclick="addNewMenu(this)" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider cursor-pointer">
+                <i class="fa-solid fa-plus mr-1"></i> Simpan Menu ke Database
+            </button>
         </div>
     </div>
 
-    <!-- VIEW 3: APLIKASI KONSUMEN / PEMESAN -->
-    <div id="customer-view" class="hidden max-w-2xl mx-auto px-4 pt-4 space-y-6">
-        <header class="luxury-card rounded-2xl px-4 py-3 text-center border border-amber-400/40">
-            <h2 id="cust-store-name" class="font-black text-base gold-text">NAMA TOKO</h2>
-            <p class="text-[10px] text-slate-300">Silakan pilih menu pesanan Anda di bawah ini</p>
+    <!-- VIEW 3: KONSUMEN (TAMPILAN MENU PESANAN) -->
+    <div id="customer-view" class="hidden max-w-2xl mx-auto space-y-6 animate-fade-in">
+        <header class="luxury-card rounded-2xl px-6 py-4 text-center border border-amber-400/40">
+            <h2 id="cust-store-name" class="font-black text-lg gold-text tracking-wide">NAMA TOKO</h2>
+            <p class="text-xs text-slate-300 mt-0.5">Silakan pilih menu pesanan favorit Anda di bawah ini</p>
         </header>
 
         <div class="space-y-4">
-            <div class="flex gap-2 overflow-x-auto pb-2" id="category-filters">
-                <button onclick="filterCategory('Semua')" class="category-btn px-4 py-1.5 rounded-full text-xs font-bold bg-amber-400 text-blue-950 shrink-0">Semua</button>
+            <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none" id="category-filters">
+                <button onclick="filterCategory('Semua')" class="category-btn px-4 py-2 rounded-full text-xs font-bold bg-amber-400 text-blue-950 shrink-0 shadow-md">Semua</button>
             </div>
 
             <div class="space-y-3" id="menu-list-container"></div>
 
-            <div class="luxury-card rounded-2xl p-4 space-y-4 border border-amber-400/50 mt-6">
-                <h3 class="text-sm font-black gold-text uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-receipt"></i> Ringkasan Pesanan
+            <div class="luxury-card rounded-3xl p-5 sm:p-6 space-y-4 border border-amber-400/50 mt-6">
+                <h3 class="text-sm font-extrabold gold-text uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-receipt"></i> Ringkasan Pesanan Anda
                 </h3>
-                <div id="cart-items" class="text-xs space-y-2 max-h-40 overflow-y-auto divide-y divide-slate-700/50">
-                    <p class="text-slate-400 text-center py-2">Belum ada menu.</p>
+                <div id="cart-items" class="text-xs space-y-2 max-h-48 overflow-y-auto divide-y divide-slate-700/50 pr-1">
+                    <p class="text-slate-400 text-center py-3">Belum ada menu yang dipilih.</p>
                 </div>
                 <div class="border-t border-amber-400/30 pt-3 flex justify-between items-center text-sm font-black">
                     <span>Total Pembayaran:</span>
-                    <span id="cart-total" class="gold-text text-base">Rp 0</span>
+                    <span id="cart-total" class="gold-text text-lg">Rp 0</span>
                 </div>
 
                 <div class="space-y-3 pt-2">
                     <div>
                         <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Pemesan:</label>
-                        <input type="text" id="customer-name" placeholder="Contoh: Bpk. Budi" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                        <input type="text" id="customer-name" placeholder="Contoh: Bpk. Budi" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-300 mb-1">Nomor Meja / Alamat Pengiriman:</label>
-                        <input type="text" id="customer-location" placeholder="Contoh: Meja No. 05" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                        <input type="text" id="customer-location" placeholder="Contoh: Meja No. 05" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-300 mb-1">Metode Pembayaran:</label>
-                        <select id="payment-method" onchange="togglePaymentProof()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                        <select id="payment-method" onchange="togglePaymentProof()" class="input-luxury w-full rounded-xl px-3.5 py-2.5 text-xs text-white">
                             <option value="Transfer Bank / QRIS">Transfer Bank / QRIS / E-Wallet</option>
                             <option value="Cash (Bayar di Kasir)">Cash / Bayar di Tempat</option>
                         </select>
                     </div>
                     <div id="proof-container" class="space-y-1">
                         <label class="block text-[11px] font-bold text-amber-300 mb-1">Upload Bukti Transfer:</label>
-                        <input type="file" id="payment-proof" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:bg-amber-400 file:text-blue-950 font-semibold cursor-pointer">
+                        <input type="file" id="payment-proof" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:bg-amber-400 file:text-blue-950 font-bold cursor-pointer">
                     </div>
                 </div>
 
-                <button onclick="sendOrderToWhatsApp()" class="gold-btn w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg">
+                <button onclick="sendOrderToWhatsApp()" class="gold-btn w-full py-3.5 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl cursor-pointer">
                     <i class="fa-brands fa-whatsapp text-lg"></i> KIRIM ORDERAN KE WHATSAPP
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT UTAMA -->
+    <!-- SCRIPT UTAMA KONTROL SISTEM -->
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyukEBCB51g5S9XpCqsiN_GheLGH1B1YvluR2Gjh7zVAs__WbtA-CYUHW0oBXtJMrRD/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzXrYjHRJEXgPo6B9mV8oxA5bd3tMZnLlKfr3ncD8wPgOq1do2UQ6KB26Nrxg8q3kZeFA/exec";
         let menuItems = [];
         let cart = {};
         let currentCategory = 'Semua';
         let currentStore = {};
+
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('app_device_id');
+            if (!deviceId) {
+                deviceId = 'DEV-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('app_device_id', deviceId);
+            }
+            return deviceId;
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -211,7 +280,6 @@
                 document.getElementById('customer-view').classList.remove('hidden');
                 fetchCustomerMenu(targetStoreKey);
             } else {
-                checkLicenseExpiration();
                 const savedStore = localStorage.getItem('locked_store_data');
                 if (savedStore) {
                     currentStore = JSON.parse(savedStore);
@@ -230,90 +298,53 @@
         });
 
         function toggleAuthMode(mode) {
+            const regForm = document.getElementById('form-register');
+            const loginForm = document.getElementById('form-login');
             if (mode === 'login') {
-                document.getElementById('form-register').classList.add('hidden');
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = "LOGIN ADMIN TOKO";
-                document.getElementById('auth-subtitle').innerText = "Masukkan Username & Password Anda";
+                regForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
             } else {
-                document.getElementById('form-login').classList.add('hidden');
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = "REGISTRASI TOKO BARU";
-                document.getElementById('auth-subtitle').innerText = "Buat Akun & Password untuk Akses 1 Tahun";
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
             }
         }
 
-        function checkLicenseExpiration() {
-            const savedStore = localStorage.getItem('locked_store_data');
-            if (!savedStore) return;
-            let storeData = JSON.parse(savedStore);
-            if (!storeData.activationDate) {
-                storeData.activationDate = new Date().toISOString();
-                localStorage.setItem('locked_store_data', JSON.stringify(storeData));
-            }
-            const activatedTime = new Date(storeData.activationDate).getTime();
-            const currentTime = new Date().getTime();
-            const oneYearInMillis = 365 * 24 * 60 * 60 * 1000; 
-
-            if ((currentTime - activatedTime) > oneYearInMillis) {
-                document.body.innerHTML = `
-                    <div class="max-w-md mx-auto px-4 pt-20 text-center">
-                        <div class="luxury-card rounded-3xl p-8 space-y-5 border border-red-500 shadow-2xl bg-slate-950">
-                            <div class="w-16 h-16 rounded-2xl bg-red-500/20 border border-red-500 mx-auto flex items-center justify-center text-red-400 text-3xl">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                            </div>
-                            <h1 class="text-xl font-black text-red-500">MASA AKTIF HABIS</h1>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Masa lisensi aplikasi toko Anda selama 12 bulan (1 Tahun) telah berakhir. Silakan perpanjangan.
-                            </p>
-                            <div class="bg-blue-950/60 p-4 rounded-2xl border border-amber-400/40 space-y-2">
-                                <p class="text-[11px] text-amber-300 font-bold uppercase">Hubungi Admin Penyedia Aplikasi:</p>
-                                <p class="text-sm font-black text-white"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> 0852-2295-2220</p>
-                                <p class="text-sm font-black text-white"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> 0858-8815-5541</p>
-                            </div>
-                            <button onclick="localStorage.clear(); location.reload();" class="text-[10px] text-slate-500 underline">Reset Lisensi</button>
-                        </div>
-                    </div>
-                `;
-                throw new Error("Expired");
-            }
-        }
-
-        async function registerStore(btn) {
+        async function generateTokenAndLogin(btn) {
             const username = document.getElementById('reg-user').value.trim();
             const password = document.getElementById('reg-pass').value.trim();
             const storeName = document.getElementById('reg-store').value.trim();
+            const ownerName = document.getElementById('reg-owner').value.trim();
             const wa = document.getElementById('reg-wa').value.trim();
             const email = document.getElementById('reg-email').value.trim();
+            const deviceId = getDeviceId();
 
-            if (!username || !password || !storeName || !wa || !email) {
-                alert("Semua kolom termasuk password wajib diisi, Boss!");
+            if (!username || !password || !storeName || !ownerName || !wa || !email) {
+                alert("Semua kolom wajib diisi, Boss!");
                 return;
             }
 
-            const oldText = btn.innerText;
-            btn.innerText = "MENDAFTARKAN...";
+            const oldText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> MEN-GENERATE TOKEN...`;
             btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "register", username, password, storeName, wa, email })
+                    body: JSON.stringify({ action: "generateToken", username, password, storeName, ownerName, wa, email, deviceId })
                 });
                 let result = await response.json();
                 if (result.status === "success") {
-                    result.activationDate = new Date().toISOString();
                     localStorage.setItem('locked_store_data', JSON.stringify(result));
-                    alert("Registrasi Berhasil!");
+                    alert("Token Berhasil Dibuat & Perangkat Terkunci 1 Tahun!");
                     location.reload();
                 } else {
                     alert("Gagal: " + (result.message || "Terjadi kesalahan."));
-                    btn.innerText = oldText;
+                    btn.innerHTML = oldText;
                     btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi server.");
-                btn.innerText = oldText;
+                btn.innerHTML = oldText;
                 btn.disabled = false;
             }
         }
@@ -321,35 +352,32 @@
         async function loginStore(btn) {
             const username = document.getElementById('login-user').value.trim();
             const password = document.getElementById('login-pass').value.trim();
+            const deviceId = getDeviceId();
 
-            if (!username || !password) {
-                alert("Masukkan username dan password!");
-                return;
-            }
+            if (!username || !password) { alert("Masukkan username dan password!"); return; }
 
-            const oldText = btn.innerText;
-            btn.innerText = "MENGECEK...";
+            const oldText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENGECEK...`;
             btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "login", username, password })
+                    body: JSON.stringify({ action: "login", username, password, deviceId })
                 });
                 let result = await response.json();
                 if (result.status === "success") {
-                    result.activationDate = new Date().toISOString();
                     localStorage.setItem('locked_store_data', JSON.stringify(result));
                     alert("Login Berhasil!");
                     location.reload();
                 } else {
-                    alert("Username atau Password salah!");
-                    btn.innerText = oldText;
+                    alert("Gagal: " + (result.message || "Username/Password salah atau beda perangkat."));
+                    btn.innerHTML = oldText;
                     btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi server.");
-                btn.innerText = oldText;
+                btn.innerHTML = oldText;
                 btn.disabled = false;
             }
         }
@@ -365,9 +393,7 @@
                 document.getElementById('cust-store-name').innerText = data.storeName || "MENU TOKO";
                 renderCategories();
                 renderMenuList();
-            } catch (err) {
-                console.error("Gagal memuat menu");
-            }
+            } catch (err) { console.error("Gagal memuat menu"); }
         }
 
         async function addNewMenu(btn) {
@@ -376,40 +402,29 @@
             const price = document.getElementById('new-price').value;
             const image = document.getElementById('new-image').value.trim();
 
-            if (!name || !price) {
-                alert("Nama menu dan harga wajib diisi!");
-                return;
-            }
+            if (!name || !price) { alert("Nama menu dan harga wajib diisi!"); return; }
 
-            const oldText = btn.innerText;
-            btn.innerText = "MENYIMPAN...";
+            const oldText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENYIMPAN...`;
             btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ 
-                        action: "saveMenu", 
-                        storeKey: currentStore.storeKey, 
-                        name, category, price, image 
-                    })
+                    body: JSON.stringify({ action: "saveMenu", storeKey: currentStore.storeKey, name, category, price, image })
                 });
                 let result = await response.json();
                 if (result.status === "success") {
-                    alert("Menu baru berhasil disimpan ke Google Sheet!");
-                    document.getElementById('new-name').value = '';
-                    document.getElementById('new-price').value = '';
-                    document.getElementById('new-image').value = '';
-                    fetchCustomerMenu(currentStore.storeKey);
+                    alert("Menu baru berhasil disimpan!");
                     location.reload();
                 } else {
-                    alert("Gagal menyimpan menu.");
-                    btn.innerText = oldText;
+                    alert("Gagal menyimpan.");
+                    btn.innerHTML = oldText;
                     btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi.");
-                btn.innerText = oldText;
+                btn.innerHTML = oldText;
                 btn.disabled = false;
             }
         }
@@ -417,18 +432,15 @@
         function togglePaymentProof() {
             const method = document.getElementById('payment-method').value;
             const proofContainer = document.getElementById('proof-container');
-            if (method.includes('Cash')) {
-                proofContainer.classList.add('hidden');
-            } else {
-                proofContainer.classList.remove('hidden');
-            }
+            if (method.includes('Cash')) { proofContainer.classList.add('hidden'); } 
+            else { proofContainer.classList.remove('hidden'); }
         }
 
         function renderCategories() {
             const categories = ['Semua', ...new Set(menuItems.map(item => item.category))];
             const container = document.getElementById('category-filters');
             container.innerHTML = categories.map(cat => `
-                <button onclick="filterCategory('${cat}')" class="category-btn px-4 py-1.5 rounded-full text-xs font-bold ${currentCategory === cat ? 'bg-amber-400 text-blue-950' : 'bg-slate-900 text-slate-300 border border-slate-700'} shrink-0 transition">
+                <button onclick="filterCategory('${cat}')" class="category-btn px-4 py-2 rounded-full text-xs font-bold ${currentCategory === cat ? 'bg-amber-400 text-blue-950 shadow-md' : 'bg-slate-900/80 text-slate-300 border border-slate-700'} shrink-0 transition">
                     ${cat}
                 </button>
             `).join('');
@@ -443,16 +455,12 @@
         function renderMenuList() {
             const container = document.getElementById('menu-list-container');
             const filtered = currentCategory === 'Semua' ? menuItems : menuItems.filter(i => i.category === currentCategory);
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">Belum ada menu.</p>`;
-                return;
-            }
+            if (filtered.length === 0) { container.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">Belum ada menu tersedia.</p>`; return; }
 
             container.innerHTML = filtered.map(item => {
                 const qty = cart[item.id] ? cart[item.id].qty : 0;
                 return `
-                    <div class="luxury-card rounded-2xl p-3 flex items-center justify-between gap-3 border border-amber-400/20">
+                    <div class="luxury-card rounded-2xl p-3.5 flex items-center justify-between gap-3 border border-amber-400/20 shadow-lg">
                         <div class="flex items-center gap-3">
                             <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'}" class="w-14 h-14 object-cover rounded-xl border border-amber-400/30">
                             <div>
@@ -462,11 +470,8 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            ${qty > 0 ? `
-                                <button onclick="updateCart(${item.id}, -1)" class="w-7 h-7 bg-red-600 text-white rounded-lg font-bold text-xs">-</button>
-                                <span class="text-xs font-bold w-5 text-center">${qty}</span>
-                            ` : ''}
-                            <button onclick="updateCart(${item.id}, 1)" class="gold-btn w-8 h-8 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                            ${qty > 0 ? `<button onclick="updateCart(${item.id}, -1)" class="w-8 h-8 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-xs shadow">-</button><span class="text-xs font-bold w-6 text-center">${qty}</span>` : ''}
+                            <button onclick="updateCart(${item.id}, 1)" class="gold-btn w-9 h-9 rounded-xl text-xs flex items-center justify-center shadow"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
                 `;
@@ -486,33 +491,22 @@
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total');
             const keys = Object.keys(cart);
-
-            if (keys.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-2">Belum ada menu.</p>`;
-                totalEl.innerText = `Rp 0`;
-                return;
-            }
+            if (keys.length === 0) { container.innerHTML = `<p class="text-slate-400 text-center py-3">Belum ada menu yang dipilih.</p>`; totalEl.innerText = `Rp 0`; return; }
 
             let total = 0;
             container.innerHTML = keys.map(k => {
                 const sub = cart[k].price * cart[k].qty;
                 total += sub;
-                return `
-                    <div class="py-1.5 flex justify-between items-center text-xs">
-                        <span>${cart[k].name} <span class="text-amber-400 font-bold">(${cart[k].qty}x)</span></span>
-                        <span class="font-bold">Rp ${sub.toLocaleString('id-ID')}</span>
-                    </div>
-                `;
+                return `<div class="py-2 flex justify-between items-center text-xs"><span>${cart[k].name} <span class="text-amber-400 font-bold">(${cart[k].qty}x)</span></span><span class="font-bold">Rp ${sub.toLocaleString('id-ID')}</span></div>`;
             }).join('');
             totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
         }
 
         function sendOrderToWhatsApp() {
             const keys = Object.keys(cart);
-            if (keys.length === 0) { alert("Pilih menu dulu!"); return; }
+            if (keys.length === 0) { alert("Pilih menu pesanan dulu!"); return; }
             const customerName = document.getElementById('customer-name').value.trim();
             const customerLocation = document.getElementById('customer-location').value.trim();
-
             if (!customerName || !customerLocation) { alert("Mohon isi Nama dan Nomor Meja / Alamat!"); return; }
 
             const paymentMethod = document.getElementById('payment-method').value;
@@ -550,7 +544,7 @@
             const copyText = document.getElementById("store-link-input");
             copyText.select();
             navigator.clipboard.writeText(copyText.value);
-            alert("Link berhasil disalin!");
+            alert("Link toko berhasil disalin!");
         }
 
         function logoutDevice() {
