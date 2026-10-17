@@ -62,7 +62,7 @@
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Alamat Email:</label>
                     <input type="email" id="reg-email" placeholder="tokoanda@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
                 </div>
-                <button onclick="registerStore()" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
+                <button onclick="registerStore(this)" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
                     Daftar & Kunci ke Perangkat Ini
                 </button>
                 <div class="text-center pt-2">
@@ -80,7 +80,7 @@
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Password:</label>
                     <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
                 </div>
-                <button onclick="loginStore()" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
+                <button onclick="loginStore(this)" class="gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg mt-2">
                     Masuk ke Dashboard Admin
                 </button>
                 <div class="text-center pt-2">
@@ -135,7 +135,7 @@
                 <input type="number" id="new-price" placeholder="Harga (Rp)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
                 <input type="text" id="new-image" placeholder="URL Foto Makanan" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
             </div>
-            <button onclick="addNewMenu()" class="gold-btn w-full py-2.5 rounded-xl text-xs uppercase tracking-wider">Simpan Menu Baru</button>
+            <button onclick="addNewMenu(this)" class="gold-btn w-full py-2.5 rounded-xl text-xs uppercase tracking-wider">Simpan Menu Baru</button>
         </div>
     </div>
 
@@ -196,7 +196,7 @@
 
     <!-- SCRIPT UTAMA -->
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwztCbP-L8QPjDBlNydqpxVLhbJZpaYRlztkfHvd3-ED39We2Cm-aJHR8RyPD33fA17Jw/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyukEBCB51g5S9XpCqsiN_GheLGH1B1YvluR2Gjh7zVAs__WbtA-CYUHW0oBXtJMrRD/exec";
         let menuItems = [];
         let cart = {};
         let currentCategory = 'Semua';
@@ -279,7 +279,7 @@
             }
         }
 
-        async function registerStore() {
+        async function registerStore(btn) {
             const username = document.getElementById('reg-user').value.trim();
             const password = document.getElementById('reg-pass').value.trim();
             const storeName = document.getElementById('reg-store').value.trim();
@@ -290,6 +290,10 @@
                 alert("Semua kolom termasuk password wajib diisi, Boss!");
                 return;
             }
+
+            const oldText = btn.innerText;
+            btn.innerText = "MENDAFTARKAN...";
+            btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
@@ -303,14 +307,18 @@
                     alert("Registrasi Berhasil!");
                     location.reload();
                 } else {
-                    alert("Gagal registrasi.");
+                    alert("Gagal: " + (result.message || "Terjadi kesalahan."));
+                    btn.innerText = oldText;
+                    btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi server.");
+                btn.innerText = oldText;
+                btn.disabled = false;
             }
         }
 
-        async function loginStore() {
+        async function loginStore(btn) {
             const username = document.getElementById('login-user').value.trim();
             const password = document.getElementById('login-pass').value.trim();
 
@@ -318,6 +326,10 @@
                 alert("Masukkan username dan password!");
                 return;
             }
+
+            const oldText = btn.innerText;
+            btn.innerText = "MENGECEK...";
+            btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
@@ -332,9 +344,13 @@
                     location.reload();
                 } else {
                     alert("Username atau Password salah!");
+                    btn.innerText = oldText;
+                    btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi server.");
+                btn.innerText = oldText;
+                btn.disabled = false;
             }
         }
 
@@ -354,7 +370,7 @@
             }
         }
 
-        async function addNewMenu() {
+        async function addNewMenu(btn) {
             const name = document.getElementById('new-name').value.trim();
             const category = document.getElementById('new-category').value;
             const price = document.getElementById('new-price').value;
@@ -364,6 +380,10 @@
                 alert("Nama menu dan harga wajib diisi!");
                 return;
             }
+
+            const oldText = btn.innerText;
+            btn.innerText = "MENYIMPAN...";
+            btn.disabled = true;
 
             try {
                 let response = await fetch(GAS_URL, {
@@ -380,11 +400,17 @@
                     document.getElementById('new-name').value = '';
                     document.getElementById('new-price').value = '';
                     document.getElementById('new-image').value = '';
+                    fetchCustomerMenu(currentStore.storeKey);
+                    location.reload();
                 } else {
                     alert("Gagal menyimpan menu.");
+                    btn.innerText = oldText;
+                    btn.disabled = false;
                 }
             } catch (err) {
                 alert("Kesalahan koneksi.");
+                btn.innerText = oldText;
+                btn.disabled = false;
             }
         }
 
@@ -481,7 +507,6 @@
             totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
         }
 
-        // KIRIM ORDER KE WA DALAM BENTUK NOTA TABEL RAPI
         function sendOrderToWhatsApp() {
             const keys = Object.keys(cart);
             if (keys.length === 0) { alert("Pilih menu dulu!"); return; }
